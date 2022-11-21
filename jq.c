@@ -457,6 +457,7 @@ jdbc_create_JDBC_connection(const ForeignServer * server, const UserMapping * us
 		ereport(ERROR, (errmsg("Failed to create java call")));
 	}
 	jq_exception_clear();
+	ereport(ERROR, (errmsg("About to call JDBCUtilsObject!")));
 	(*Jenv)->CallObjectMethod(Jenv, conn->JDBCUtilsObject, idCreate, keyid, argArray);
 	jq_get_exception();
 	/* Return Java memory */
