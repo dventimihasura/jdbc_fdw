@@ -397,25 +397,21 @@ jdbc_create_JDBC_connection(const ForeignServer * server, const UserMapping * us
 	Jconn	   *conn = (Jconn *) palloc0(sizeof(Jconn));
 
 	ereport(DEBUG3, (errmsg("In jdbc_create_JDBC_connection")));
-	ereport(DEBUG3, (errmsg("Here:")));
 	conn->status = CONNECTION_BAD;
 	conn->festate = (jdbcFdwExecutionState *) palloc0(sizeof(jdbcFdwExecutionState));
 	conn->festate->query = NULL;
 	JDBCUtilsClass = (*Jenv)->FindClass(Jenv, "JDBCUtils");
-	ereport(DEBUG3, (errmsg("Here:")));
 	if (JDBCUtilsClass == NULL)
 	{
 		ereport(ERROR, (errmsg("Failed to find the JDBCUtils class!")));
 	}
 	idCreate = (*Jenv)->GetMethodID(Jenv, JDBCUtilsClass, "createConnection",
 					"(I[Ljava/lang/String;)V");
-	ereport(DEBUG3, (errmsg("Here:")));
 	if (idCreate == NULL)
 	{
 		ereport(ERROR, (errmsg("Failed to find the JDBCUtils.createConnection method!")));
 	}
 	idGetIdentifierQuoteString = (*Jenv)->GetMethodID(Jenv, JDBCUtilsClass, "getIdentifierQuoteString", "()Ljava/lang/String;");
-	ereport(DEBUG3, (errmsg("Here:")));
 	if (idGetIdentifierQuoteString == NULL)
 	{
 		ereport(ERROR, (errmsg("Failed to find the JDBCUtils.getIdentifierQuoteString method")));
@@ -435,8 +431,6 @@ jdbc_create_JDBC_connection(const ForeignServer * server, const UserMapping * us
 	stringArray[5] = (*Jenv)->NewStringUTF(Jenv, opts.jarfile);
 	/* Set up the return value */
 	javaString = (*Jenv)->FindClass(Jenv, "java/lang/String");
-	ereport(DEBUG3, (errmsg("Here:")));
-	ereport(DEBUG3, (errmsg("About to call NewObjectArray!")));
 	argArray = (*Jenv)->NewObjectArray(Jenv, numParams, javaString, stringArray[0]);
 	if (argArray == NULL)
 	{
@@ -451,7 +445,6 @@ jdbc_create_JDBC_connection(const ForeignServer * server, const UserMapping * us
 	{
 		(*Jenv)->SetObjectArrayElement(Jenv, argArray, i, stringArray[i]);
 	}
-	ereport(DEBUG3, (errmsg("About to call AllocObject!")));
 	conn->JDBCUtilsObject = (*Jenv)->AllocObject(Jenv, JDBCUtilsClass);
 	if (conn->JDBCUtilsObject == NULL)
 	{
@@ -464,8 +457,6 @@ jdbc_create_JDBC_connection(const ForeignServer * server, const UserMapping * us
 		ereport(ERROR, (errmsg("Failed to create java call")));
 	}
 	jq_exception_clear();
-	ereport(DEBUG3, (errmsg("About to call JDBCUtilsObject!")));
-	ereport(ERROR, (errmsg("")));
 	(*Jenv)->CallObjectMethod(Jenv, conn->JDBCUtilsObject, idCreate, keyid, argArray);
 	jq_get_exception();
 	/* Return Java memory */
