@@ -431,6 +431,7 @@ jdbc_create_JDBC_connection(const ForeignServer * server, const UserMapping * us
 	stringArray[5] = (*Jenv)->NewStringUTF(Jenv, opts.jarfile);
 	/* Set up the return value */
 	javaString = (*Jenv)->FindClass(Jenv, "java/lang/String");
+	ereport(DEBUG3, (errmsg("About to call NewObjectArray!")));
 	argArray = (*Jenv)->NewObjectArray(Jenv, numParams, javaString, stringArray[0]);
 	if (argArray == NULL)
 	{
@@ -445,6 +446,7 @@ jdbc_create_JDBC_connection(const ForeignServer * server, const UserMapping * us
 	{
 		(*Jenv)->SetObjectArrayElement(Jenv, argArray, i, stringArray[i]);
 	}
+	ereport(DEBUG3, (errmsg("About to call AllocObject!")));
 	conn->JDBCUtilsObject = (*Jenv)->AllocObject(Jenv, JDBCUtilsClass);
 	if (conn->JDBCUtilsObject == NULL)
 	{
@@ -457,7 +459,8 @@ jdbc_create_JDBC_connection(const ForeignServer * server, const UserMapping * us
 		ereport(ERROR, (errmsg("Failed to create java call")));
 	}
 	jq_exception_clear();
-	ereport(ERROR, (errmsg("About to call JDBCUtilsObject!")));
+	ereport(DEBUG3, (errmsg("About to call JDBCUtilsObject!")));
+	ereport(ERROR, (errmsg("")));
 	(*Jenv)->CallObjectMethod(Jenv, conn->JDBCUtilsObject, idCreate, keyid, argArray);
 	jq_get_exception();
 	/* Return Java memory */
