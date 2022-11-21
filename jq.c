@@ -429,6 +429,12 @@ jdbc_create_JDBC_connection(const ForeignServer * server, const UserMapping * us
 	stringArray[3] = (*Jenv)->NewStringUTF(Jenv, opts.password);
 	stringArray[4] = (*Jenv)->NewStringUTF(Jenv, querytimeout_string);
 	stringArray[5] = (*Jenv)->NewStringUTF(Jenv, opts.jarfile);
+	ereport(DEBUG3, (errmsg("opts.drivername: %s", opts.drivername)));
+	ereport(DEBUG3, (errmsg("opts.url: %s", opts.url)));
+	ereport(DEBUG3, (errmsg("opts.username: %s", opts.username)));
+	ereport(DEBUG3, (errmsg("opts.password: %s", opts.password)));
+	ereport(DEBUG3, (errmsg("querytimeout_string: %s", querytimeout_string)));
+	ereport(DEBUG3, (errmsg("opts.jarfile: %s", opts.jarfile)));
 	/* Set up the return value */
 	javaString = (*Jenv)->FindClass(Jenv, "java/lang/String");
 	argArray = (*Jenv)->NewObjectArray(Jenv, numParams, javaString, stringArray[0]);
@@ -457,8 +463,11 @@ jdbc_create_JDBC_connection(const ForeignServer * server, const UserMapping * us
 		ereport(ERROR, (errmsg("Failed to create java call")));
 	}
 	jq_exception_clear();
+	ereport(DEBUG3, (errmsg("Here:")));
 	(*Jenv)->CallObjectMethod(Jenv, conn->JDBCUtilsObject, idCreate, keyid, argArray);
+	ereport(DEBUG3, (errmsg("Here:")));
 	jq_get_exception();
+	ereport(DEBUG3, (errmsg("Here:")));
 	/* Return Java memory */
 	for (i = 0; i < numParams; i++)
 	{
